@@ -3,6 +3,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { DragControls } from 'three/addons/controls/DragControls.js';
 import { TeapotGeometry } from 'three/addons/geometries/TeapotGeometry.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { XRButton } from 'three/addons/webxr/XRButton.js';
+
 
 class DisplaySurface 
 {
@@ -146,11 +148,16 @@ function createEyeScene()
 
 function createRenderer()
 {
-    renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true});
+    renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true, antialias: true});
     renderer.autoClear = false;
-    //renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
+    //renderer.setAnimationLoop(animat);
+    renderer.shadowMap.enabled = true;
+    renderer.xr.enabled = true;
+    renderer.xr.cameraAutoUpdate = false;
     document.body.appendChild(renderer.domElement);
+    document.body.appendChild( XRButton.createButton( renderer ) );
 }
 
 function onWindowResize()
@@ -322,6 +329,7 @@ var animate = function () {
 
     // 0. update
     var up = new THREE.Vector3(0, 1, 0);
+    renderer.xr.updateCamera(camera);
 
     // update head
     var head = eyeScene.getObjectByName("Head");
