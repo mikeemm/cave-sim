@@ -105,9 +105,10 @@ function addDragControlToObjects()
     } );
 }
 
+var IPD = 6.8; 
+
 function createEyeScene()
 {
-    var IPD = 6.8; 
     eyeCenter = new THREE.Vector3(50, 20, 50);
     // eye positions relative to the head
     var eyeL = new THREE.Vector3( - IPD/2, 10, -6);
@@ -386,9 +387,31 @@ var animate = function () {
         renderer.render(eyeScene, camera);
 };
 
+function modifyEyes() {
+    var eyeL = eyeScene.getObjectByName("EyeL");
+    var eyeR = eyeScene.getObjectByName("EyeR");
+
+    // (0,10,0) + (cos(0), 0, sin(0))*(0.5, 0, -6/6.8)*6.8 = (3.4, 10, -6). This is the initial eyeR position relative to the head
+    var newEyePos = new THREE.Vector3(0, 10, -6).add(new THREE.Vector3(Math.cos(eye_angle), 0, Math.sin(eye_angle)).multiply(new THREE.Vector3(1, 0, 1)).multiplyScalar(IPD/2));
+
+    //console.log(newEyePos.x + " " + newEyePos.y + " " + newEyePos.z)
+
+    eyeL.position.set( - newEyePos.x, newEyePos.y, newEyePos.z);
+    eyeR.position.set( + newEyePos.x, newEyePos.y, newEyePos.z);
+
+    //eyeL.position.set( - IPD/2, 10, -6);
+    //eyeR.position.set( IPD/2, 10, -6);
+    
+}
+
+var IPD_increment = 0.5;
+var eye_angle = 0;
+var eye_angle_increment = Math.PI/16;
+
+var cameraOnEye = false;
 
 window.addEventListener( 'keydown', function ( event ) 
-{
+{   
     switch ( event.code ) {
         case 'KeyL': 
             var eye = getLeftEyePosition();
@@ -430,33 +453,67 @@ window.addEventListener( 'keydown', function ( event )
             if (event.repeat) headDirectionX += clock.getDelta() * 10;
             var head = eyeScene.getObjectByName("Head");
             camera.rotation.set(head.rotation.x, head.rotation.y, head.rotation.z);
-            var eye = (currentEye == "L" ? getLeftEyePosition() : getRightEyePosition());
-            camera.position.set(eye.x, eye.y, eye.z); 
+            //var eye = (currentEye == "L" ? getLeftEyePosition() : getRightEyePosition());
+            //camera.position.set(eye.x, eye.y, eye.z); 
+            //cameraOnEye = true;
             break;
 
         case 'ArrowDown':
             if (event.repeat) headDirectionX -= clock.getDelta() * 10;
             var head = eyeScene.getObjectByName("Head");
             camera.rotation.set(head.rotation.x, head.rotation.y, head.rotation.z);
-            var eye = (currentEye == "L" ? getLeftEyePosition() : getRightEyePosition());
+            //var eye = (currentEye == "L" ? getLeftEyePosition() : getRightEyePosition());
+            //camera.position.set(eye.x, eye.y, eye.z); 
+            //cameraOnEye = true;
             break;
 
         case 'ArrowLeft':
             if (event.repeat) headDirectionY += clock.getDelta() * 10;
             var head = eyeScene.getObjectByName("Head");
             camera.rotation.set(head.rotation.x, head.rotation.y, head.rotation.z);
-            var eye = (currentEye == "L" ? getLeftEyePosition() : getRightEyePosition());
-            camera.position.set(eye.x, eye.y, eye.z); 
+            //var eye = (currentEye == "L" ? getLeftEyePosition() : getRightEyePosition());
+            //camera.position.set(eye.x, eye.y, eye.z); 
+            //cameraOnEye = true;
             break;
 
         case 'ArrowRight':
             if (event.repeat) headDirectionY -= clock.getDelta() * 10;
             var head = eyeScene.getObjectByName("Head");
             camera.rotation.set(head.rotation.x, head.rotation.y, head.rotation.z);
-            var eye = (currentEye == "L" ? getLeftEyePosition() : getRightEyePosition());
+            //var eye = (currentEye == "L" ? getLeftEyePosition() : getRightEyePosition());
+            //camera.position.set(eye.x, eye.y, eye.z); 
+            //cameraOnEye = true;
+            break;
+        case 'KeyE':
+            IPD += IPD_increment;
+            //cameraOnEye = true;
+            break;
+        
+        case 'KeyQ': 
+            IPD -= IPD_increment;
+            //cameraOnEye = true;
+            break;
+            
+        case 'KeyZ': 
+            eye_angle -= eye_angle_increment;
+            //cameraOnEye = true;
+            break;
+        
+        case 'KeyC': 
+            eye_angle += eye_angle_increment;
+            //cameraOnEye = true;
+            break;
+        
+        case 'KeyM':
+            cameraOnEye = !cameraOnEye;
             break;
     }
     headDirectionX = Math.min(Math.max(-90 * deg2rad, headDirectionX), 90 * deg2rad);
+    modifyEyes();
+    if (cameraOnEye) {
+        var eye = (currentEye == "L" ? getLeftEyePosition() : getRightEyePosition());
+        camera.position.set(eye.x, eye.y, eye.z); 
+    }
 });
 
 
