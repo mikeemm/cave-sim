@@ -152,7 +152,7 @@ function createRenderer()
     renderer.autoClear = false;
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
-    //renderer.setAnimationLoop(animat);
+    renderer.setAnimationLoop(animat);
     renderer.shadowMap.enabled = true;
     renderer.xr.enabled = true;
     renderer.xr.cameraAutoUpdate = false;
