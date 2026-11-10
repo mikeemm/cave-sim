@@ -198,7 +198,7 @@ async function createScene()
     var teapot = new THREE.Mesh(geometry, material);
     teapot.name = "Teapot";
     teapot.position.z-=70;
-    scene.add( teapot );
+    //scene.add( teapot );
     
     const loader = new GLTFLoader();
     var cactuar_obj = await loader.loadAsync("models/cactuar_final_fantasy.glb");
@@ -207,6 +207,11 @@ async function createScene()
     cactuar.scale.set(10, 10, 10);
     cactuar.name = "Cactuar";
     scene.add(cactuar);
+
+    var desert_obj = await loader.loadAsync("models/desert.glb");
+    var desert = desert_obj.scene;
+    desert.position.set(0, -150, -20);
+    scene.add(desert);
 
     createLights(scene);
 }
@@ -373,7 +378,7 @@ var animate = function () {
     if (showScene)
         renderer.render(scene, camera);
     
-    /*
+    
     // 2. render scene objects onto a texture, for each target
     for (let [index, displaySurface] of displaySurfaces.entries())
     {
@@ -402,7 +407,7 @@ var animate = function () {
     }
     // restore state
     renderer.setRenderTarget(null);
-    renderer.setClearColor(0x000000);*/
+    renderer.setClearColor(0x000000);
   
     // 3. render display surfaces as (textured) quads
     renderer.render(displaySurfaceScene, camera);
