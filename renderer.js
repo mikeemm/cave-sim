@@ -4,6 +4,7 @@ import { DragControls } from 'three/addons/controls/DragControls.js';
 import { TeapotGeometry } from 'three/addons/geometries/TeapotGeometry.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { XRButton } from 'three/addons/webxr/XRButton.js';
+import { VRButton } from 'three/addons/webxr/VRButton.js';
 
 
 class DisplaySurface 
@@ -152,12 +153,13 @@ function createRenderer()
     renderer.autoClear = false;
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setAnimationLoop(animat);
+    renderer.setAnimationLoop(animate);
     renderer.shadowMap.enabled = true;
     renderer.xr.enabled = true;
     renderer.xr.cameraAutoUpdate = false;
     document.body.appendChild(renderer.domElement);
     document.body.appendChild( XRButton.createButton( renderer ) );
+    //document.body.appendChild( VRButton.createButton( renderer ) );
 }
 
 function onWindowResize()
