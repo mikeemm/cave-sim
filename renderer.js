@@ -153,7 +153,6 @@ function createRenderer()
     renderer.autoClear = false;
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setAnimationLoop(animate);
     renderer.shadowMap.enabled = true;
     renderer.xr.enabled = true;
     renderer.xr.cameraAutoUpdate = false;
@@ -550,5 +549,6 @@ var isRightHeld = false;
     });
     enableOrbitCamera(camera, renderer);  // basic camera control
     addDragControlToObjects();	// allow some objects to be dragged
+    renderer.setAnimationLoop(animate);
     animate();
 })();
