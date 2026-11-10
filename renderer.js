@@ -332,11 +332,26 @@ var animate = function () {
     renderer.xr.updateCamera(camera);
 
     // update head
+    if (isUpHeld) headDirectionX += clock.getDelta() * 2.5;
+    if (isDownHeld) headDirectionX -= clock.getDelta() * 2.5;
+    if (isLeftHeld) headDirectionY += clock.getDelta() * 2.5;
+    if (isRightHeld) headDirectionY -= clock.getDelta() * 2.5;
+
+
     var head = eyeScene.getObjectByName("Head");
     head.rotation.set(0, 0, 0);
     head.rotateZ(headDirectionZ);
     head.rotateX(headDirectionX);
     head.rotateOnWorldAxis(up, headDirectionY);
+
+    headDirectionX = Math.min(Math.max(-90 * deg2rad, headDirectionX), 90 * deg2rad);
+    modifyEyes();
+    if (cameraOnEye) {
+        var eye = (currentEye == "L" ? getLeftEyePosition() : getRightEyePosition());
+        camera.position.set(eye.x, eye.y, eye.z); 
+        var head = eyeScene.getObjectByName("Head");
+        camera.rotation.set(head.rotation.x, head.rotation.y, head.rotation.z);
+    }
 
     // animate cactuar
     var totalTime = clock.getElapsedTime();
@@ -417,113 +432,10 @@ var eye_angle = 0;
 var eye_angle_increment = Math.PI/16;
 
 var cameraOnEye = false;
-
-window.addEventListener( 'keydown', function ( event ) 
-{   
-    switch ( event.code ) {
-        case 'KeyL': 
-            var eye = getLeftEyePosition();
-            camera.position.set(eye.x, eye.y, eye.z);
-            var head = eyeScene.getObjectByName("Head");
-            camera.rotation.set(head.rotation.x, head.rotation.y, head.rotation.z);
-            currentEye = "L";
-            break;
-            
-        case 'KeyR': 
-            var eye = getRightEyePosition();
-            camera.position.set(eye.x, eye.y, eye.z); 
-            var head = eyeScene.getObjectByName("Head");
-            camera.rotation.set(head.rotation.x, head.rotation.y, head.rotation.z);
-            currentEye = "R";
-            break;
-            
-        case 'KeyS':
-            showScene = !showScene;
-            break;
-            
-        case 'KeyT':
-            var viewF = displaySurfaces[0].viewMatrix(new THREE.Vector3(50,20,100));
-            var viewL = displaySurfaces[1].viewMatrix(new THREE.Vector3(50,20,100));
-            //var viewR = displaySurfaces[2].viewMatrix(new THREE.Vector3(50,20,100));
-            //var viewB = displaySurfaces[3].viewMatrix(new THREE.Vector3(50,20,100));
-            console.log("View matrices:");
-            console.log(viewF);
-            console.log(viewL);
-            //console.log(viewR);
-            //console.log(viewB);
-            break;
-
-        case 'KeyH':
-            showHead = !showHead;
-            break;
-            
-        case 'ArrowUp':
-            if (event.repeat) headDirectionX += clock.getDelta() * 10;
-            var head = eyeScene.getObjectByName("Head");
-            camera.rotation.set(head.rotation.x, head.rotation.y, head.rotation.z);
-            //var eye = (currentEye == "L" ? getLeftEyePosition() : getRightEyePosition());
-            //camera.position.set(eye.x, eye.y, eye.z); 
-            //cameraOnEye = true;
-            break;
-
-        case 'ArrowDown':
-            if (event.repeat) headDirectionX -= clock.getDelta() * 10;
-            var head = eyeScene.getObjectByName("Head");
-            camera.rotation.set(head.rotation.x, head.rotation.y, head.rotation.z);
-            //var eye = (currentEye == "L" ? getLeftEyePosition() : getRightEyePosition());
-            //camera.position.set(eye.x, eye.y, eye.z); 
-            //cameraOnEye = true;
-            break;
-
-        case 'ArrowLeft':
-            if (event.repeat) headDirectionY += clock.getDelta() * 10;
-            var head = eyeScene.getObjectByName("Head");
-            camera.rotation.set(head.rotation.x, head.rotation.y, head.rotation.z);
-            //var eye = (currentEye == "L" ? getLeftEyePosition() : getRightEyePosition());
-            //camera.position.set(eye.x, eye.y, eye.z); 
-            //cameraOnEye = true;
-            break;
-
-        case 'ArrowRight':
-            if (event.repeat) headDirectionY -= clock.getDelta() * 10;
-            var head = eyeScene.getObjectByName("Head");
-            camera.rotation.set(head.rotation.x, head.rotation.y, head.rotation.z);
-            //var eye = (currentEye == "L" ? getLeftEyePosition() : getRightEyePosition());
-            //camera.position.set(eye.x, eye.y, eye.z); 
-            //cameraOnEye = true;
-            break;
-        case 'KeyE':
-            IPD += IPD_increment;
-            //cameraOnEye = true;
-            break;
-        
-        case 'KeyQ': 
-            IPD -= IPD_increment;
-            //cameraOnEye = true;
-            break;
-            
-        case 'KeyZ': 
-            eye_angle -= eye_angle_increment;
-            //cameraOnEye = true;
-            break;
-        
-        case 'KeyC': 
-            eye_angle += eye_angle_increment;
-            //cameraOnEye = true;
-            break;
-        
-        case 'KeyM':
-            cameraOnEye = !cameraOnEye;
-            break;
-    }
-    headDirectionX = Math.min(Math.max(-90 * deg2rad, headDirectionX), 90 * deg2rad);
-    modifyEyes();
-    if (cameraOnEye) {
-        var eye = (currentEye == "L" ? getLeftEyePosition() : getRightEyePosition());
-        camera.position.set(eye.x, eye.y, eye.z); 
-    }
-});
-
+var isUpHeld = false;
+var isDownHeld = false;
+var isLeftHeld = false;
+var isRightHeld = false;
 
 (async () => {
     createRenderer();  			// create WebGL renderer
@@ -534,6 +446,106 @@ window.addEventListener( 'keydown', function ( event )
     await createScene();		// some objects to test (teapot...)
     createCamera();		// a third-person camera
     window.addEventListener('resize', onWindowResize);
+    window.addEventListener( 'keydown', function ( event ) 
+    {
+        switch ( event.code ) {
+            case 'KeyL': 
+                var eye = getLeftEyePosition();
+                camera.position.set(eye.x, eye.y, eye.z);
+                var head = eyeScene.getObjectByName("Head");
+                camera.rotation.set(head.rotation.x, head.rotation.y, head.rotation.z);
+                currentEye = "L";
+                break;
+                
+            case 'KeyR': 
+                var eye = getRightEyePosition();
+                camera.position.set(eye.x, eye.y, eye.z); 
+                var head = eyeScene.getObjectByName("Head");
+                camera.rotation.set(head.rotation.x, head.rotation.y, head.rotation.z);
+                currentEye = "R";
+                break;
+                
+            case 'KeyS':
+                showScene = !showScene;
+                break;
+                
+            case 'KeyT':
+                var viewF = displaySurfaces[0].viewMatrix(new THREE.Vector3(50,20,100));
+                var viewL = displaySurfaces[1].viewMatrix(new THREE.Vector3(50,20,100));
+                //var viewR = displaySurfaces[2].viewMatrix(new THREE.Vector3(50,20,100));
+                //var viewB = displaySurfaces[3].viewMatrix(new THREE.Vector3(50,20,100));
+                console.log("View matrices:");
+                console.log(viewF);
+                console.log(viewL);
+                //console.log(viewR);
+                //console.log(viewB);
+                break;
+
+            case 'KeyH':
+                showHead = !showHead;
+                break;
+                
+            case 'ArrowUp':
+                isUpHeld = true;
+                break;
+
+            case 'ArrowDown':
+                isDownHeld = true;
+                break;
+
+            case 'ArrowLeft':
+                isLeftHeld = true;
+                break;
+
+            case 'ArrowRight':
+                isRightHeld = true;
+                break;
+            case 'KeyE':
+                IPD += IPD_increment;
+                //cameraOnEye = true;
+                break;
+            
+            case 'KeyQ': 
+                IPD -= IPD_increment;
+                //cameraOnEye = true;
+                break;
+                
+            case 'KeyZ': 
+                eye_angle -= eye_angle_increment;
+                //cameraOnEye = true;
+                break;
+            
+            case 'KeyC': 
+                eye_angle += eye_angle_increment;
+                //cameraOnEye = true;
+                break;
+            
+            case 'KeyM':
+                cameraOnEye = !cameraOnEye;
+                break;
+        }
+    });
+
+    window.addEventListener( 'keyup', function( event )
+    {
+        switch ( event.code ) {
+            case 'ArrowUp':
+                isUpHeld = false;
+                break;
+
+            case 'ArrowDown':
+                isDownHeld = false;
+                break;
+
+            case 'ArrowLeft':
+                isLeftHeld = false;
+                break;
+
+            case 'ArrowRight':
+                isRightHeld = false;
+                break;
+        }
+    });
     enableOrbitCamera(camera, renderer);  // basic camera control
     addDragControlToObjects();	// allow some objects to be dragged
     animate();
