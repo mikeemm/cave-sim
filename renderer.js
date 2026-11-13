@@ -80,6 +80,7 @@ var clock = new THREE.Clock();
 var deg2rad = Math.PI/180;
 var currentEye = "";
 
+
 function addDragControlToObjects()
 {
     var objects = [];
@@ -328,6 +329,7 @@ function cameraFromViewProj(view, proj)
 	return cam;
 }
 
+
 // refresh function
 var animate = function () {
     var gl = renderer.getContext();
@@ -337,6 +339,7 @@ var animate = function () {
     var up = new THREE.Vector3(0, 1, 0);
     renderer.xr.updateCamera(camera);
 
+    
     // update head
     if (isUpHeld) headDirectionX += clock.getDelta() * 2.5;
     if (isDownHeld) headDirectionX -= clock.getDelta() * 2.5;
@@ -379,6 +382,7 @@ var animate = function () {
         renderer.render(scene, camera);
     
     
+    renderer.xr.enabled = false;
     // 2. render scene objects onto a texture, for each target
     for (let [index, displaySurface] of displaySurfaces.entries())
     {
@@ -408,6 +412,8 @@ var animate = function () {
     // restore state
     renderer.setRenderTarget(null);
     renderer.setClearColor(0x000000);
+
+    renderer.xr.enabled = true;
   
     // 3. render display surfaces as (textured) quads
     renderer.render(displaySurfaceScene, camera);
@@ -434,6 +440,49 @@ function modifyEyes() {
     
 }
 
+var cameraGroup = new THREE.Group();
+cameraGroup.position.set(50, 30, 44);
+
+var vrActive = false;
+
+function addXREventListeners() {
+    renderer.xr.addEventListener('sessionstart', function () {
+        //vrActive = true;
+        //cameraOnEye = true;
+        //showHead = false;
+        //scene.add(cameraGroup);
+        //renderer.setAnimationLoop(null);
+        //renderer.xr.setAnimationLoop(animate);
+        //cameraGroup.add(camera);
+        
+        //console.log("cameraGroup position: " + cameraGroup.position.x + " " + cameraGroup.position.y + " " + cameraGroup.position.z);
+
+    });
+
+    renderer.xr.addEventListener('sessionend', function () {
+        //vrActive = false;
+        //cameraOnEye = false;
+        //showHead = true;
+        //scene.remove(cameraGroup);
+        //renderer.setAnimationLoop(animate);
+        //renderer.xr.setAnimationLoop(null);
+        //cameraGroup.remove(camera);
+    });
+
+    var hand1, hand2;
+
+    hand1 = renderer.xr.getHand(0);
+    hand2 = renderer.xr.getHand(1);
+
+    hand1.addEventListener('squeezestart', function () {
+        showScene = !showScene;
+    });
+
+    hand2.addEventListener('squeezestart', function () {
+        showScene = !showScene;
+    });
+}
+
 var IPD_increment = 0.5;
 var eye_angle = 0;
 var eye_angle_increment = Math.PI/16;
@@ -452,9 +501,11 @@ var isRightHeld = false;
     createEyeScene();	// spheres representing head + eyes
     await createScene();		// some objects to test (teapot...)
     createCamera();		// a third-person camera
+    addXREventListeners();
     window.addEventListener('resize', onWindowResize);
     window.addEventListener( 'keydown', function ( event ) 
     {
+        //if (vrActive) return;  // ignore keyboard events when in VR mode
         switch ( event.code ) {
             case 'KeyL': 
                 var eye = getLeftEyePosition();
@@ -535,6 +586,7 @@ var isRightHeld = false;
 
     window.addEventListener( 'keyup', function( event )
     {
+        if (vrActive) return;  // ignore keyboard events when in VR mode
         switch ( event.code ) {
             case 'ArrowUp':
                 isUpHeld = false;
