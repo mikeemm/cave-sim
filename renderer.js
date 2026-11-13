@@ -72,6 +72,7 @@ class DisplaySurface
 
 var renderer, scene, camera;
 var displaySurfaces, displaySurfaceScene, displaySurfaceTargets;
+var defaultGrayMat;
 var eyeCenter, eyeScene;
 var headDirectionX, headDirectionY, headDirectionZ;
 var orbitControl;
@@ -220,6 +221,8 @@ async function createScene()
 // create a scene with 3D objects representing the display surfaces
 function createDisplaySurfaceScene()
 {
+    defaultGrayMat = new THREE.MeshBasicMaterial({ color: 0x808080 });
+
     displaySurfaceScene = new THREE.Scene();
 
     // add display surfaces
@@ -423,7 +426,8 @@ var animate = function () {
     renderer.setRenderTarget(null);
     renderer.setClearColor(0x000000);
     }
-    else if (firstVrFrame) {
+    
+    if (firstVrFrame) {
         for (let [index, displaySurface] of displaySurfaces.entries())
         {
             renderer.setRenderTarget(displaySurfaceTargets[index]);
@@ -431,7 +435,6 @@ var animate = function () {
             renderer.clear();
         }
         firstVrFrame = false;
-        renderer.setRenderTarget(null);
     }
   
     
