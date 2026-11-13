@@ -381,6 +381,13 @@ var animate = function () {
     if (showScene)
         renderer.render(scene, camera);
 
+    // 3. render display surfaces as (textured) quads
+    renderer.render(displaySurfaceScene, camera);
+	
+	// 4. render eyes
+    if (showHead)
+        renderer.render(eyeScene, camera);
+
     if (!vrActive) {
     //const wasXrEnabled = renderer.xr.enabled;
     //renderer.xr.enabled = false;
@@ -427,12 +434,7 @@ var animate = function () {
         renderer.setRenderTarget(null);
     }
   
-    // 3. render display surfaces as (textured) quads
-    renderer.render(displaySurfaceScene, camera);
-	
-	// 4. render eyes
-    if (showHead)
-        renderer.render(eyeScene, camera);
+    
 };
 
 function modifyEyes() {
