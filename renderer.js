@@ -404,8 +404,9 @@ var animate = function () {
         gl.colorMask(1, 1, 1, 1);
     }
     // restore state
-    renderer.setRenderTarget(null);
     renderer.xr.enabled = true;
+
+	renderer.setRenderTarget(null);
 
 
     renderer.setClearColor(0x808080);
