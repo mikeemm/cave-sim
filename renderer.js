@@ -84,8 +84,8 @@ var currentEye = "";
 function addDragControlToObjects()
 {
     var objects = [];
-    objects.push(scene.getObjectByName("Teapot"));
-    //objects.push(scene.getObjectByName("Cactuar"));
+    //objects.push(scene.getObjectByName("Teapot"));
+    objects.push(scene.getObjectByName("Cactuar"));
     objects.push(eyeScene.getObjectByName("Head"));
     
 	//console.log(objects); 
@@ -199,7 +199,7 @@ async function createScene()
     var teapot = new THREE.Mesh(geometry, material);
     teapot.name = "Teapot";
     teapot.position.z-=70;
-    scene.add( teapot );
+    //scene.add( teapot );
     
     const loader = new GLTFLoader();
     var cactuar_obj = await loader.loadAsync("models/cactuar_final_fantasy.glb");
@@ -207,12 +207,12 @@ async function createScene()
     cactuar.position.set(0, 0, -225);
     cactuar.scale.set(10, 10, 10);
     cactuar.name = "Cactuar";
-    //scene.add(cactuar);
+    scene.add(cactuar);
 
     var desert_obj = await loader.loadAsync("models/desert.glb");
     var desert = desert_obj.scene;
     desert.position.set(0, -150, -20);
-    //scene.add(desert);
+    scene.add(desert);
 
     createLights(scene);
 }
@@ -363,7 +363,6 @@ var animate = function () {
     }
 
     // animate cactuar
-    /*
     var totalTime = clock.getElapsedTime();
     var cactuar = scene.getObjectByName("Cactuar");
     var cacPos = new THREE.Vector3(0, 0, -75);
@@ -375,13 +374,6 @@ var animate = function () {
     cactuar.rotateOnWorldAxis(up, -totalTime/2 - Math.sin(totalTime / 2) * deg2rad * 50);
     var scaleRate = Math.sin(totalTime * 10 + Math.PI/2);
     cactuar.scale.set(10 + scaleRate, 10 + scaleRate, 10 + scaleRate);
-    */
-
-    // 1. render scene objects
-	renderer.setClearColor(0x808080);
-    renderer.clear();
-    if (showScene)
-        renderer.render(scene, camera);
     
     
     renderer.xr.enabled = false;
@@ -413,9 +405,14 @@ var animate = function () {
     }
     // restore state
     renderer.setRenderTarget(null);
-    renderer.setClearColor(0x000000);
-
     renderer.xr.enabled = true;
+
+
+    renderer.setClearColor(0x808080);
+    renderer.clear();
+
+    if (showScene)
+        renderer.render(scene, camera);
   
     // 3. render display surfaces as (textured) quads
     renderer.render(displaySurfaceScene, camera);
