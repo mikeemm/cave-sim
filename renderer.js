@@ -416,6 +416,15 @@ var animate = function () {
     renderer.setRenderTarget(null);
     renderer.setClearColor(0x000000);
     }
+    else if (firstVrFrame) {
+        for (let [index, displaySurface] of displaySurfaces.entries())
+        {
+            renderer.setRenderTarget(displaySurfaceTargets[index]);
+            renderer.setClearColor(0x404040);
+            renderer.clear();
+        }
+        firstVrFrame = false;
+    }
   
     // 3. render display surfaces as (textured) quads
     renderer.render(displaySurfaceScene, camera);
@@ -450,6 +459,7 @@ var vrActive = false;
 function addXREventListeners() {
     renderer.xr.addEventListener('sessionstart', function () {
         vrActive = true;
+        firstVrFrame = true;
         //cameraOnEye = true;
         //showHead = false;
         //scene.add(cameraGroup);
