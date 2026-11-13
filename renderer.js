@@ -435,6 +435,7 @@ var animate = function () {
             renderer.clear();
         }
         firstVrFrame = false;
+        renderer.setRenderTarget(null);
     }
   
     
@@ -461,6 +462,7 @@ var cameraGroup = new THREE.Group();
 cameraGroup.position.set(50, 30, 44);
 
 var vrActive = false;
+var firstVrFrame = false;
 
 function addXREventListeners() {
     renderer.xr.addEventListener('sessionstart', function () {
