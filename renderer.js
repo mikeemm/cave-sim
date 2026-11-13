@@ -459,7 +459,7 @@ function modifyEyes() {
 }
 
 var cameraGroup = new THREE.Group();
-cameraGroup.position.set(50, 30, 44);
+cameraGroup.position.set(0, 0, 0);
 
 var vrActive = false;
 var firstVrFrame = false;
@@ -470,10 +470,8 @@ function addXREventListeners() {
         firstVrFrame = true;
         //cameraOnEye = true;
         //showHead = false;
-        //scene.add(cameraGroup);
-        //renderer.setAnimationLoop(null);
-        //renderer.xr.setAnimationLoop(animate);
-        //cameraGroup.add(camera);
+        scene.add(cameraGroup);
+        cameraGroup.add(camera);
         
         //console.log("cameraGroup position: " + cameraGroup.position.x + " " + cameraGroup.position.y + " " + cameraGroup.position.z);
 
@@ -483,10 +481,8 @@ function addXREventListeners() {
         vrActive = false;
         //cameraOnEye = false;
         //showHead = true;
-        //scene.remove(cameraGroup);
-        //renderer.setAnimationLoop(animate);
-        //renderer.xr.setAnimationLoop(null);
-        //cameraGroup.remove(camera);
+        scene.remove(cameraGroup);
+        cameraGroup.remove(camera);
     });
 
     var hand1, hand2;
@@ -498,10 +494,25 @@ function addXREventListeners() {
         showScene = !showScene;
     });
 
-    hand2.addEventListener('squeezestart', function () {
-        showScene = !showScene;
+    hand1.addEventListener('selectstart', function () {
+        var eye = getLeftEyePosition();
+        cameraGroup.position.set(eye.x, eye.y, eye.z);
+        currentEye = "L";
     });
+
+    hand2.addEventListener('squeezestart', function () {
+        showHead = !showHead;
+    });
+
+    hand2.addEventListener('selectstart', function () {
+        var eye = getRightEyePosition();
+        cameraGroup.position.set(eye.x, eye.y, eye.z); 
+        currentEye = "R";
+    });
+
+    
 }
+
 
 var IPD_increment = 0.5;
 var eye_angle = 0;
