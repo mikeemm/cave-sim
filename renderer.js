@@ -333,7 +333,7 @@ function cameraFromViewProj(view, proj)
 // refresh function
 var animate = function () {
     var gl = renderer.getContext();
-    //requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
 
     // 0. update
     var up = new THREE.Vector3(0, 1, 0);
