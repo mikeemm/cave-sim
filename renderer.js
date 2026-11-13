@@ -333,7 +333,7 @@ function cameraFromViewProj(view, proj)
 // refresh function
 var animate = function () {
     var gl = renderer.getContext();
-    requestAnimationFrame(animate);
+    //requestAnimationFrame(animate);
 
     // 0. update
     var up = new THREE.Vector3(0, 1, 0);
@@ -608,5 +608,5 @@ var isRightHeld = false;
     enableOrbitCamera(camera, renderer);  // basic camera control
     addDragControlToObjects();	// allow some objects to be dragged
     renderer.setAnimationLoop(animate);
-    animate();
+    //animate();
 })();
