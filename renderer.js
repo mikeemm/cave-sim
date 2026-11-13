@@ -449,7 +449,7 @@ var vrActive = false;
 
 function addXREventListeners() {
     renderer.xr.addEventListener('sessionstart', function () {
-        //vrActive = true;
+        vrActive = true;
         //cameraOnEye = true;
         //showHead = false;
         //scene.add(cameraGroup);
@@ -462,7 +462,7 @@ function addXREventListeners() {
     });
 
     renderer.xr.addEventListener('sessionend', function () {
-        //vrActive = false;
+        vrActive = false;
         //cameraOnEye = false;
         //showHead = true;
         //scene.remove(cameraGroup);
