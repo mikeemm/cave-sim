@@ -375,8 +375,15 @@ var animate = function () {
     var scaleRate = Math.sin(totalTime * 10 + Math.PI/2);
     cactuar.scale.set(10 + scaleRate, 10 + scaleRate, 10 + scaleRate);
     
-    
-    renderer.xr.enabled = false;
+    renderer.setClearColor(0x808080);
+    renderer.clear();
+
+    if (showScene)
+        renderer.render(scene, camera);
+
+    if (!vrActive) {
+    //const wasXrEnabled = renderer.xr.enabled;
+    //renderer.xr.enabled = false;
     // 2. render scene objects onto a texture, for each target
     for (let [index, displaySurface] of displaySurfaces.entries())
     {
@@ -404,16 +411,11 @@ var animate = function () {
         gl.colorMask(1, 1, 1, 1);
     }
     // restore state
-    renderer.xr.enabled = true;
+    //renderer.xr.enabled = wasXrEnabled;
 
-	renderer.setRenderTarget(null);
-
-
-    renderer.setClearColor(0x808080);
-    renderer.clear();
-
-    if (showScene)
-        renderer.render(scene, camera);
+    renderer.setRenderTarget(null);
+    renderer.setClearColor(0x000000);
+    }
   
     // 3. render display surfaces as (textured) quads
     renderer.render(displaySurfaceScene, camera);
